@@ -25,14 +25,8 @@ export class MEVProtector {
         .update(JSON.stringify(tx) + Date.now())
         .digest("hex");
 
-      // Simulate small random delay (anti-front-running noise)
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 300));
-      const protectedTx = {
-        ...tx, hash, protectedAt: new Date().toISOString()
-      };
-
-      console.log("✅ Transaction bundled and protected:", protectedTx);
-      return protectedTx;
+      // console.log("✅ Transaction bundled and protected:", protectedTx);
+      return hash;
     } catch (error) {
       console.error("❌ MEV Protection failed:", error);
       throw error;
