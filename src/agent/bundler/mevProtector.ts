@@ -27,22 +27,15 @@ export class MEVProtector {
 
       // Simulate small random delay (anti-front-running noise)
       await new Promise((resolve) => setTimeout(resolve, Math.random() * 300));
+      const protectedTx = {
+        ...tx, hash, protectedAt: new Date().toISOString()
+      };
 
-      // Return a safe immutable object
-      return Object.freeze({
-        ...tx,
-        protected: true,
-        timestamp: Date.now(),
-        protectionHash: hash,
-        metadata: {
-          mevShield: true,
-          randomizedDelay: true,
-          integrityCheck: "sha256",
-        },
-      });
+      console.log("✅ Transaction bundled and protected:", protectedTx);
+      return protectedTx;
     } catch (error) {
-      console.error("❌ MEV Protection failed:", error.message);
-      throw new Error("Transaction protection failed");
+      console.error("❌ MEV Protection failed:", error);
+      throw error;
     }
   }
-}
+} 
