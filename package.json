@@ -1,0 +1,26 @@
+{
+  "name": "bnb-trading-agent",
+  "version": "1.0.0",
+  "description": "Simple BNB Trading Agent in TypeScript",
+  "main": "trading-agent.ts",
+  "scripts": {
+    "start": "ts-node trading-agent.ts",
+    "build": "tsc",
+    "dev": "ts-node --transpile-only trading-agent.ts"
+  },
+  "keywords": ["binance", "trading", "typescript", "crypto"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "binance": "^3.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.6.2",
+    "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
