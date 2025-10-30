@@ -103,3 +103,26 @@ async function getCurrentPrice(symbol: string): Promise<number | null> {
     return null;
   }
 }
+
+// --------------------------------------------------------------
+// Helper: fetch minimum trade quantity for a symbol
+// --------------------------------------------------------------
+async function getMinQuantity(symbol: string): Promise<number> {
+  try {
+    const info: ExchangeInfo = await client.getExchangeInfo();
+    const symInfo = info.symbols.find(s => s.symbol === symbol);
+    if (!symInfo) {
+      throw new Error('Symbol not found');
+    }
+
+    const lotSizeFilter = symInfo.filters.find(f => f.filterType === 'LOT_SIZE');
+    if (!lotSizeFilter || !lotSizeFilter.minQty) {
+      throw new Error('MinQty not found in filters');
+    }
+
+    return parseFloat(lotSizeFilter.minQty);
+  } catch (error) {
+    console.error(`Error fetching min quantity: ${error}`);
+    return 0.001; // Fallback; adjust per symbol
+  }
+}
