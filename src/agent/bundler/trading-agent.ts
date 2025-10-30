@@ -15,3 +15,15 @@ if (!apiKey || !apiSecret) {
 }
 
 const client = new MainClient({ api_key: apiKey, api_secret: apiSecret });
+
+// --------------------------------------------------------------
+// Types (simplified; library provides more)
+// --------------------------------------------------------------
+interface KlinesResponse extends Array<any> {} // [openTime, open, high, low, close, volume, ...]
+interface TickerPrice { symbol: string; price: string; }
+interface SymbolInfo {
+  symbol: string;
+  filters: Array<{ filterType: string; minQty?: string; stepSize?: string }>;
+}
+interface ExchangeInfo { symbols: SymbolInfo[]; }
+interface OrderResponse { status: string; /* more fields */ }
