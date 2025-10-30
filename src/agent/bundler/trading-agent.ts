@@ -201,3 +201,30 @@ async function operation(
     }
 
     console.log(`Current price: ${currentPrice}, minMean: ${minMean}, maxMean: ${maxMean}`);
+
+     // ------------------------------------------------------
+    // BUY LOGIC
+    // ------------------------------------------------------
+    if (buyMode && currentPrice <= minMean) {
+      quantity = getQuantityBuy(minQuantity, currentPrice, investment);
+      buyMoney = currentPrice * quantity;
+      rest = investment - buyMoney;
+
+      console.log(`Buy Order! Spent: ${buyMoney}, Rest: ${rest}, Qty: ${quantity}`);
+
+      try {
+        const order: OrderResponse = await client.submitNewOrder({
+          symbol,
+          side: 'BUY',
+          type: 'MARKET',
+          quantity,
+        });
+        if (order.status === 'FILLED') {
+          buyMode = false;
+          sellMode = true;
+        }
+      } catch (error) {
+        console.error(`Error buying ${symbol}: ${error}`);
+        return;
+      }
+    }
