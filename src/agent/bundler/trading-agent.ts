@@ -160,3 +160,44 @@ function getProfits(
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+// --------------------------------------------------------------
+// Main trading loop
+// --------------------------------------------------------------
+async function operation(
+  symbol: string,
+  initialInvestment: number,
+  startTimeStr: string,
+  endTimeStr?: string,
+  interval: string = '1MINUTE'
+): Promise<void> {
+  const startTime = convertTime(startTimeStr);
+  const endTime = endTimeStr ? convertTime(endTimeStr) : undefined;
+
+  const result = await getHistoricalPrices(symbol, startTime, endTime, interval);
+  if (!result) {
+    console.error('Failed to get historical prices');
+    return;
+  }
+
+  const { minMean, maxMean } = result;
+  const minQuantity = await getMinQuantity(symbol);
+
+  // State variables
+  let buyMode = true;
+  let sellMode = false;
+  let quantity = 0.0;
+  let investment = initialInvestment;
+  let buyMoney = 0.0;
+  let rest = 0.0;
+
+  console.log(`Starting bot: minMean=${minMean}, maxMean=${maxMean}, minQty=${minQuantity}`);
+
+  while (true) {
+    const currentPrice = await getCurrentPrice(symbol);
+    if (currentPrice === null) {
+      await delay(2000);
+      continue;
+    }
+
+    console.log(`Current price: ${currentPrice}, minMean: ${minMean}, maxMean: ${maxMean}`);
