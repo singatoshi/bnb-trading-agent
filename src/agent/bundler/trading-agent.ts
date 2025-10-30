@@ -42,3 +42,51 @@ function convertTime(timeStr: string): number {
     throw new Error(`Invalid datetime format: ${timeStr}`);
   }
 }
+
+// --------------------------------------------------------------
+// Helper: fetch historical klines and compute min / max means
+// --------------------------------------------------------------
+async function getHistoricalPrices(
+  symbol: string,
+  startTime: number,
+  endTime?: number,
+  interval: string = '1m'
+): Promise<{ minMean: number; maxMean: number } | null> {
+  const intervalMap: { [key: string]: string } = {
+    '1MINUTE': '1m',
+    '30MINUTE': '30m',
+    '1WEEK': '1w',
+  };
+
+  const binanceInterval = intervalMap[interval] || interval;
+  if (!binanceInterval) {
+    console.error('Error: invalid interval');
+    return null;
+  }
+
+  try {
+    const klines: KlinesResponse = await client.klines({
+      symbol,
+      interval: binanceInterval,
+      startTime,
+      endTime,
+      limit: 500, // Max per request; adjust as needed
+    });
+
+    if (!klines || klines.length === 0) {
+      console.error('Error: No data available');
+      return null;
+    }
+
+    const lows = klines.map(k => parseFloat(k[3])); // low price
+    const highs = klines.map(k => parseFloat(k[2])); // high price
+
+    const minMean = lows.reduce((a, b) => a + b, 0) / lows.length;
+    const maxMean = highs.reduce((a, b) => a + b, 0) / highs.length;
+
+    return { minMean, maxMean };
+  } catch (error) {
+    console.error(`Error fetching historical prices: ${error}`);
+    return null;
+  }
+}
