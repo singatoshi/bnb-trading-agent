@@ -126,3 +126,21 @@ async function getMinQuantity(symbol: string): Promise<number> {
     return 0.001; // Fallback; adjust per symbol
   }
 }
+
+
+// --------------------------------------------------------------
+// Helper: compute how many units we can actually buy
+// --------------------------------------------------------------
+function getQuantityBuy(
+  minQuantity: number,
+  currentPrice: number,
+  investment: number
+): number {
+  const totalPossible = investment / currentPrice;
+  let quantity = Math.floor(totalPossible / minQuantity) * minQuantity;
+
+  // Determine precision from stepSize (simplified; use symInfo for exact)
+  const stepSize = minQuantity / 10; // Approximate
+  const precision = Math.max(1, Math.floor(Math.log10(1 / stepSize)));
+  return parseFloat(quantity.toFixed(precision));
+}
