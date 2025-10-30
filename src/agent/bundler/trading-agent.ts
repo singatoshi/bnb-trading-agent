@@ -90,3 +90,16 @@ async function getHistoricalPrices(
     return null;
   }
 }
+
+// --------------------------------------------------------------
+// Helper: get current price from ticker
+// --------------------------------------------------------------
+async function getCurrentPrice(symbol: string): Promise<number | null> {
+  try {
+    const ticker: TickerPrice = await client.getSymbolTickerPrice({ symbol });
+    return parseFloat(ticker.price);
+  } catch (error) {
+    console.error(`Error fetching current price: ${error}`);
+    return null;
+  }
+}
