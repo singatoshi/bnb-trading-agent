@@ -228,3 +228,31 @@ async function operation(
         return;
       }
     }
+
+        // ------------------------------------------------------
+    // SELL LOGIC
+    // ------------------------------------------------------
+    else if (sellMode && currentPrice >= maxMean) {
+      console.log(`Sell Order! Qty: ${quantity}, Current price: ${currentPrice}`);
+
+      try {
+        const order: OrderResponse = await client.submitNewOrder({
+          symbol,
+          side: 'SELL',
+          type: 'MARKET',
+          quantity,
+        });
+        if (order.status === 'FILLED') {
+          const profit = getProfits(investment, currentPrice, quantity);
+          investment = investment + profit + rest;
+          console.log(`Profits: ${profit}, New total investment: ${investment}`);
+
+          buyMode = true;
+          sellMode = false;
+        }
+      } catch (error) {
+        console.error(`Error selling ${symbol}: ${error}`);
+        return;
+      }
+    }
+
