@@ -37,5 +37,3 @@ npm install
  - Define trading strategies in strategies/ folder.
  - Default strategies include buy/sell triggers based on price thresholds.
 
-## Contact
-**Telegram** | [@Sabonis](https://t.me/dogewhiz) 
