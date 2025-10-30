@@ -27,3 +27,18 @@ interface SymbolInfo {
 }
 interface ExchangeInfo { symbols: SymbolInfo[]; }
 interface OrderResponse { status: string; /* more fields */ }
+
+// --------------------------------------------------------------
+// Helper: convert datetime string (mm/dd/yyyy) to timestamp (ms)
+// --------------------------------------------------------------
+function convertTime(timeStr: string): number {
+  try {
+    const parsed = new Date(timeStr.split('/').reverse().join('-')); // mm/dd/yyyy -> yyyy-mm-dd
+    if (isNaN(parsed.getTime())) {
+      throw new Error('Invalid date');
+    }
+    return parsed.getTime();
+  } catch (error) {
+    throw new Error(`Invalid datetime format: ${timeStr}`);
+  }
+}
